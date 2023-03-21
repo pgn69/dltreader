@@ -16,7 +16,7 @@ def get_long_description():
 
 setup(
     name="dltreader",
-    version="0.0.1",
+    version="0.0.2",
     description="DLT reader for AUTOSAR Diagnostic, Log and Trace Protocol.",
     long_description=get_long_description(),
     url="https://github.com/keans/dltreader",
