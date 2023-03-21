@@ -1,0 +1,9 @@
+site_name: dlt
+# site_url: https://example.com/
+nav:
+    - Home: index.md
+    - Setup: setup.md
+    - Usage: usage.md
+    - Background: background.md
+    - About: about.md
+theme: readthedocs
