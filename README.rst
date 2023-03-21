@@ -15,6 +15,14 @@ free software license shall is supported to make it usable in possible
 commercial contexts.
 
 
+Setup
+-----
+
+::
+
+    pip install -U dltreader
+
+
 Example
 -------
 
