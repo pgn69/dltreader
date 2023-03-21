@@ -19,7 +19,7 @@ setup(
     version="0.0.1",
     description="DLT reader for AUTOSAR Diagnostic, Log and Trace Protocol.",
     long_description=get_long_description(),
-    url="https://github.com/keans/dlt",
+    url="https://github.com/keans/dltreader",
     author="Ansgar Kellner",
     author_email="keans@gmx.de",
     license="MIT",

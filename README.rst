@@ -18,7 +18,17 @@ commercial contexts.
 Example
 -------
 
+::
 
+    from dlt import DltReader
+
+    with DltReader("example.dlt") as r:
+        for storage_header, packet in r:
+            if not packet.has_payload():
+                # skip packets that do not have a payload
+                continue
+
+            print(packet)
 
 
 Limitations
