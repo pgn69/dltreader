@@ -127,10 +127,10 @@ class DltStandardHeader(TypeReader):
         obj.eid = obj.read_string(f, 4) if obj.has_weid() else ""
 
         # set session id
-        obj.sid = obj.read_uint32(f) if obj.has_wsid() else ""
+        obj.sid = obj.read_uint32(f, msbf=True) if obj.has_wsid() else ""
 
         # set timestamp
-        obj.tms = obj.read_uint32(f) if obj.has_wtms() else ""
+        obj.tms = obj.read_uint32(f, msbf=True) if obj.has_wtms() else ""
 
         return obj
 

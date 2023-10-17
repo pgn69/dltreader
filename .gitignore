@@ -12,4 +12,5 @@ dist/
 docs/site
 *.egg-info/
 .vscode/
+**/__pycache__
 

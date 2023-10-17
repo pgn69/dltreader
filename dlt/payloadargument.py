@@ -63,7 +63,7 @@ class DltPayloadArgument(TypeReader):
 
         # get scod value
         obj.scod_value = (
-            (obj.value & PayloadArgumentMask.SCOD.value)
+            ((obj.value & PayloadArgumentMask.SCOD.value) >> 15)
             if obj.scod
             else None
         )

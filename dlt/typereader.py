@@ -350,6 +350,11 @@ class TypeReader:
         :rtype: str
 
         """
-        return self._read(
-            fmt=f"{self.prefix(msbf)}{n}s", f=f, n=n
-        ).decode(encoding)
+        ret = ""
+        try:
+            ret = self._read(
+                fmt=f"{self.prefix(msbf)}{n}s", f=f, n=n
+            ).decode(encoding)
+        except UnicodeError:
+            ret = "--- decode error ---"
+        return ret

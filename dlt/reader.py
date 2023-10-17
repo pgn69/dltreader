@@ -121,7 +121,7 @@ class DltReader(ContextDecorator):
                 except DltStorageHeaderException as e:
                     # skip invalid block with
                     # broken storage header
-                    log.error(e)
+                    log.debug(e)
 
             except EOFError:
                 # Struct raised EOF

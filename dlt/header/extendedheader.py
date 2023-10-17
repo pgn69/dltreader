@@ -64,13 +64,15 @@ class DltExtendedHeader(TypeReader):
 
         try:
             # depending on message type set message info
-            obj.mtin = {
-                DltMessageType.LOG: DltLogLevelType,
-                DltMessageType.APP_TRACE: DltAppTraceType,
-                DltMessageType.NW_TRACE: DltNetworkTraceType,
-                DltMessageType.CONTROL: DltControlType,
-            }[obj.mstp](mtin_value)
-
+            if obj.mstp != DltMessageType.RESERVED:
+                obj.mtin = {
+                    DltMessageType.LOG: DltLogLevelType,
+                    DltMessageType.APP_TRACE: DltAppTraceType,
+                    DltMessageType.NW_TRACE: DltNetworkTraceType,
+                    DltMessageType.CONTROL: DltControlType,
+                }[obj.mstp](mtin_value)
+            else:
+                obj.mtin = None
         except ValueError:
             # invalid value
             log.error(f"Invalid value '{mtin_value}' for '{obj.mstp}'!")
@@ -96,10 +98,12 @@ class DltExtendedHeader(TypeReader):
         """
         if (self.verb is False) and (self.noar != 0x00):
             # ensure that no arguments are provided in non-verbose mode
-            log.warning(
+            log.debug(
                 "in non-verbose mode the number of arguments (noar) "
                 "shall be '0x00'"
             )
+            return False
+        return True
 
     def __repr__(self) -> str:
         """

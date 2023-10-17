@@ -52,6 +52,11 @@ class DltMessageType(Enum):
     APP_TRACE = 0x01
     NW_TRACE = 0x02
     CONTROL = 0x03
+    RESERVED = 0x04  # 4-7
+    @classmethod
+    def _missing_(cls, value):
+        return cls.RESERVED
+        
 
 
 class DltLogLevelType(Enum):
