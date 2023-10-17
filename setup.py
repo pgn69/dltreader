@@ -16,12 +16,12 @@ def get_long_description():
 
 setup(
     name="dltreader",
-    version="0.0.2",
+    version="2023.1",
     description="DLT reader for AUTOSAR Diagnostic, Log and Trace Protocol.",
     long_description=get_long_description(),
-    url="https://github.com/keans/dltreader",
-    author="Ansgar Kellner",
-    author_email="keans@gmx.de",
+    url="https://github.com/pgn69/dltreader",
+    author="Ansgar Kellner, PgN69",
+    author_email="keans@gmx.de, https://github.com/pgn69",
     license="MIT",
     classifiers=[
         "Development Status :: 3 - Alpha",
