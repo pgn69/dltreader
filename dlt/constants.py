@@ -75,6 +75,15 @@ class DltLogLevelType(Enum):
     DEBUG = 0x05
     # log level type verbose
     VERBOSE = 0x06
+    CUSTOM_07 = 0x07
+    CUSTOM_08 = 0x08
+    CUSTOM_09 = 0x09
+    CUSTOM_0a = 0x0a
+    CUSTOM_0b = 0x0b
+    CUSTOM_0c = 0x0c
+    CUSTOM_0d = 0x0d
+    CUSTOM_0e = 0x0e
+    CUSTOM_0f = 0x0f
 
 
 class DltAppTraceType(Enum):
