@@ -1,7 +1,8 @@
 import logging
 import socket
+import asyncio
+import time
 from typing import Union, BinaryIO
-from pathlib import Path
 from contextlib import ContextDecorator
 
 from .exceptions import DltStorageHeaderException
@@ -26,14 +27,14 @@ class SocketIO(BinaryIO):
             nn += len(r)
             ret.extend(r)
         return ret
-    
+
     def close(self):
         self._socket.close()
 
 
-class DltReceiver(ContextDecorator):
+class DltAsyncReceiver(ContextDecorator):
     """
-    main DLT receiver class
+    main DLT receiver class for asyncio
     """
     def __init__(self,
         host: str,
@@ -45,7 +46,7 @@ class DltReceiver(ContextDecorator):
         self._socket = None
         self._reader = None
         self._writer = None
-
+        self._io = None
         # if True, big endian is used
         self.msbf = msbf
 
@@ -57,7 +58,7 @@ class DltReceiver(ContextDecorator):
     def port(self) -> str:
         return self._port
 
-    def __enter__(self) -> "DltReceiver":
+    async def __aenter__(self) -> "DltAsyncReceiver":
         """
         enter the context
 
@@ -65,28 +66,33 @@ class DltReceiver(ContextDecorator):
         :rtype: DltReceiver
         """
         log.debug("entering DLT context...")
-
-        self.open()
+        await self.open()
         return self
 
-    def __exit__(self, *exc):
+    async def __aexit__(self, *exc):
         """
         exit the context
         """
         log.debug("leaving DLT context...")
+        await asyncio.to_thread(self.close)
 
-        self.close()
-
-        return False
-
-    def open(self):
+    def _open(self):
         """
         open the TCP connection
         """
         log.debug(f"opening DLT TCP stream {self.host}:{self.port}...")
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._socket.connect((self._host, self._port))
-        self._io = SocketIO(self._socket)
+        while True:
+            try:
+                self._socket.connect((self._host, self._port))
+                self._io = SocketIO(self._socket)
+                log.debug(f"opened DLT TCP stream {self.host}:{self.port}")
+                return
+            except ConnectionRefusedError:
+                time.sleep(0.5)
+
+    async def open(self):
+        await asyncio.to_thread(self._open)
 
     def close(self):
         """
@@ -97,31 +103,33 @@ class DltReceiver(ContextDecorator):
             self._io.close()
             self._io = None
 
-    def __iter__(self) -> "DltReceiver":
+    def __aiter__(self) -> "DltAsyncReceiver":
         return self
 
-    def __next__(self) -> tuple:
+    def _get_next(self):
+        return None, DltPacket.create_from(
+                    f=self._io,
+                    msbf=self.msbf
+                )
+
+    async def __anext__(self) -> tuple:
         """
         read stream one packet after the other
 
         :return: tuple of DltHeader and parsed package
         :rtype: tuple
         """
-        # get header
-        log.debug(f"reading DLT stream {self.host}:{self.port}...")
+        log.debug(f"reading DLT stream {self.host}:{self.port} IO {self._io} ...")
         while True:
             try:
                 # read the packet and return it
-                return None, DltPacket.create_from(
-                    f=self._io,
-                    msbf=self.msbf
-                )
+                return await asyncio.to_thread(self._get_next)
 
             except EOFError:
                 # Struct raised EOF
+                log.debug(f"DLT stream {self.host}:{self.port} EOF")
                 raise StopIteration()
 
             except Exception as e:
                 # skip invalid block
                 log.debug(f"{type(e)}: {e}")
-        
